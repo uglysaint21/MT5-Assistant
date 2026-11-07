@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -120,6 +121,6 @@ def test_partial_close_fixture_reconciles_to_current_position_volume():
         if position["positionId"] == "H-POS-2001"
     )
     related = [deal for deal in dataset["deals"] if deal.get("positionId") == "H-POS-2001"]
-    opened = sum(float(deal["volume"]) for deal in related if deal["entry"] == "IN")
-    closed = sum(float(deal["volume"]) for deal in related if deal["entry"] == "OUT")
-    assert round(opened - closed, 8) == round(float(position["volume"]), 8)
+    opened = sum((Decimal(deal["volume"]) for deal in related if deal["entry"] == "IN"), Decimal("0"))
+    closed = sum((Decimal(deal["volume"]) for deal in related if deal["entry"] == "OUT"), Decimal("0"))
+    assert opened - closed == Decimal(position["volume"])
