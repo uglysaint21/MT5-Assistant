@@ -1,6 +1,6 @@
 export const PROTOCOL_VERSION = 1 as const;
 
-export type RequestEnvelope<TPayload = unknown> = {
+export type RequestEnvelope<TPayload = Record<string, unknown>> = {
   kind: "request";
   protocolVersion: typeof PROTOCOL_VERSION;
   requestId: string;
@@ -8,7 +8,7 @@ export type RequestEnvelope<TPayload = unknown> = {
   payload: TPayload;
 };
 
-export type SuccessResponse<TResult = unknown> = {
+export type SuccessResponse<TResult = Record<string, unknown>> = {
   kind: "response";
   protocolVersion: typeof PROTOCOL_VERSION;
   requestId: string;
@@ -29,7 +29,7 @@ export type ErrorResponse = {
   };
 };
 
-export type ProtocolResponse<TResult = unknown> =
+export type ProtocolResponse<TResult = Record<string, unknown>> =
   | SuccessResponse<TResult>
   | ErrorResponse;
 
@@ -40,20 +40,100 @@ export type ReadyMessage = {
   capabilities: string[];
 };
 
-export function isProtocolResponse(value: unknown): value is ProtocolResponse {
-  if (typeof value !== "object" || value === null) return false;
-  const candidate = value as Record<string, unknown>;
-  if (
-    candidate.kind !== "response" ||
-    candidate.protocolVersion !== PROTOCOL_VERSION ||
-    typeof candidate.requestId !== "string" ||
-    typeof candidate.ok !== "boolean"
-  ) return false;
+export type EventMessage = {
+  kind: "event";
+  protocolVersion: typeof PROTOCOL_VERSION;
+  eventId: string;
+  event: string;
+  occurredAt: string;
+  payload: Record<string, unknown>;
+};
 
-  if (candidate.ok) return "result" in candidate;
-  const error = candidate.error;
-  return typeof error === "object" && error !== null &&
-    typeof (error as Record<string, unknown>).code === "string" &&
-    typeof (error as Record<string, unknown>).message === "string" &&
-    typeof (error as Record<string, unknown>).retryable === "boolean";
+export type ProtocolEnvelope =
+  | RequestEnvelope
+  | ProtocolResponse
+  | ReadyMessage
+  | EventMessage;
+
+type UnknownRecord = Record<string, unknown>;
+
+function isRecord(value: unknown): value is UnknownRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function hasExactKeys(
+  value: UnknownRecord,
+  required: string[],
+  optional: string[] = []
+): boolean {
+  const keys = Object.keys(value);
+  return required.every((key) => Object.hasOwn(value, key)) &&
+    keys.every((key) => required.includes(key) || optional.includes(key));
+}
+
+function isNonEmptyString(value: unknown, maxLength = 256): value is string {
+  return typeof value === "string" && value.trim().length > 0 && value.length <= maxLength;
+}
+
+function isErrorPayload(value: unknown): value is ErrorResponse["error"] {
+  if (!isRecord(value) ||
+      !hasExactKeys(value, ["code", "message", "retryable"], ["details"])) return false;
+  return isNonEmptyString(value.code, 128) &&
+    isNonEmptyString(value.message, 1024) &&
+    typeof value.retryable === "boolean" &&
+    (!Object.hasOwn(value, "details") || isRecord(value.details));
+}
+
+export function isProtocolResponse(value: unknown): value is ProtocolResponse {
+  if (!isRecord(value) ||
+      value.kind !== "response" ||
+      value.protocolVersion !== PROTOCOL_VERSION ||
+      !isNonEmptyString(value.requestId, 128) ||
+      typeof value.ok !== "boolean") return false;
+
+  if (value.ok) {
+    return hasExactKeys(value, ["kind", "protocolVersion", "requestId", "ok", "result"]) &&
+      isRecord(value.result);
+  }
+  return hasExactKeys(value, ["kind", "protocolVersion", "requestId", "ok", "error"]) &&
+    isErrorPayload(value.error);
+}
+
+export function isProtocolEnvelope(value: unknown): value is ProtocolEnvelope {
+  if (!isRecord(value) || value.protocolVersion !== PROTOCOL_VERSION) return false;
+
+  if (value.kind === "response") return isProtocolResponse(value);
+
+  if (value.kind === "request") {
+    return hasExactKeys(value, [
+      "kind", "protocolVersion", "requestId", "operation", "payload"
+    ]) &&
+      isNonEmptyString(value.requestId, 128) &&
+      isNonEmptyString(value.operation, 128) &&
+      isRecord(value.payload);
+  }
+
+  if (value.kind === "ready") {
+    if (!hasExactKeys(value, [
+      "kind", "protocolVersion", "serviceVersion", "capabilities"
+    ]) || !isNonEmptyString(value.serviceVersion, 64) || !Array.isArray(value.capabilities)) {
+      return false;
+    }
+    return value.capabilities.every((item) => isNonEmptyString(item)) &&
+      new Set(value.capabilities).size === value.capabilities.length;
+  }
+
+  if (value.kind === "event") {
+    return hasExactKeys(value, [
+      "kind", "protocolVersion", "eventId", "event", "occurredAt", "payload"
+    ]) &&
+      isNonEmptyString(value.eventId, 128) &&
+      isNonEmptyString(value.event, 128) &&
+      isRecord(value.payload) &&
+      typeof value.occurredAt === "string" &&
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value.occurredAt) &&
+      !Number.isNaN(Date.parse(value.occurredAt));
+  }
+
+  return false;
 }
