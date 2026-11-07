@@ -20,7 +20,7 @@ class ActiveRequestIds:
         self._max_active = max_active
 
     def register(self, request_id: str) -> None:
-        if not isinstance(request_id, str) or not request_id.strip():
+        if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 128:
             raise ProtocolError("Request ID must be a non-empty string.")
         if request_id in self._active:
             raise ProtocolError("Duplicate active request ID.")
@@ -45,11 +45,19 @@ def _reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def _reject_non_json_constant(value: str) -> None:
+    raise ProtocolError(f"Invalid JSON numeric constant: {value}")
+
+
 def decode_frame(line: str) -> dict[str, Any]:
-    if len(line.encode("utf-8")) > MAX_FRAME_BYTES:
+    try:
+        encoded = line.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ProtocolError("Protocol frame is not valid UTF-8.") from exc
+    if len(encoded) > MAX_FRAME_BYTES:
         raise ProtocolError("Protocol frame exceeds the maximum size.")
     try:
-        value = json.loads(line, object_pairs_hook=_reject_duplicate_keys)
+        value = json.loads(line, object_pairs_hook=_reject_duplicate_keys, parse_constant=_reject_non_json_constant)
     except ProtocolError:
         raise
     except (json.JSONDecodeError, UnicodeEncodeError) as exc:
@@ -137,7 +145,7 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(message["payload"], dict):
             raise ProtocolError("Protocol event payload must be an object.")
         timestamp = message["occurredAt"]
-        if not isinstance(timestamp, str):
+        if not isinstance(timestamp, str) or not timestamp.endswith("Z"):
             raise ProtocolError("Protocol event occurredAt must be a UTC ISO-8601 timestamp.")
         try:
             parsed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
