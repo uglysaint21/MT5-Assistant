@@ -71,3 +71,26 @@ def test_operation_registry_is_allow_listed_and_has_no_trade_entry_operation():
     assert registry["prohibitedOperations"] == [
         "trade.openPosition", "trade.openPendingOrder", "trade.placeOrder"
     ]
+    capability_ids = {
+        capability["id"] for capability in
+        json.loads((ROOT / "protocol" / "capabilities.json").read_text(encoding="utf-8"))["capabilities"]
+    }
+    assert all(operation["capability"] in capability_ids for operation in registry["operations"])
+
+
+def test_error_catalogue_has_stable_codes_and_safe_recovery_metadata():
+    catalogue = json.loads((ROOT / "protocol" / "error-codes.json").read_text(encoding="utf-8"))
+    required_codes = {
+        "TERMINAL_NOT_FOUND", "TERMINAL_INITIALIZATION_FAILED", "TERMINAL_DISCONNECTED",
+        "ACCOUNT_UNAUTHORISED", "ACCOUNT_MISMATCH", "HISTORY_UNAVAILABLE",
+        "SYMBOL_UNAVAILABLE", "MARKET_CLOSED", "BROKER_CONSTRAINT_VIOLATION",
+        "UNSUPPORTED_OPERATION", "REQUEST_REJECTED", "REQUEST_TIMEOUT_UNKNOWN",
+        "PROTOCOL_VERSION_UNSUPPORTED", "PROTOCOL_INVALID_MESSAGE", "SERVICE_START_FAILED",
+        "SERVICE_CRASHED", "DATA_STALE", "DATA_INCOMPLETE", "RISK_LIMIT_REACHED",
+        "APP_LOCKED", "EXPORT_FAILED", "OPERATION_RECONCILIATION_REQUIRED"
+    }
+    assert required_codes <= set(catalogue["errors"])
+    for definition in catalogue["errors"].values():
+        assert isinstance(definition["retryable"], bool)
+        assert definition["message"].strip()
+        assert definition["recovery"].strip()
