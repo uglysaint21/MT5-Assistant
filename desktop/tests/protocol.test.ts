@@ -66,5 +66,9 @@ describe("protocol envelope validation", () => {
       kind: "event", protocolVersion: 1, eventId: "evt-3",
       event: "sync.progress", occurredAt: "2026-11-07T18:00:00+03:00", payload: {}
     })).toBe(false);
+    expect(isProtocolEnvelope({
+      kind: "event", protocolVersion: 1, eventId: "evt-4",
+      event: "sync.progress", occurredAt: "2026-02-30T18:00:00Z", payload: {}
+    })).toBe(false);
   });
 });
