@@ -29,16 +29,28 @@ A checked item means code or automation exists in the repository; it does not im
 - [ ] Validate the supported Windows 10/11, Python, MetaTrader5 package and terminal build compatibility matrix on clean target systems.
 - [ ] Generate and commit reproducible npm and Python dependency lockfiles. Direct desktop development dependencies are pinned, but transitive dependency resolution is not yet locked.
 - [x] Verify the GitHub Actions workflow on the latest PR head and resolve failures. Earlier runs exposed TypeScript import interoperability, a case-sensitive Python assertion and one formatting issue; all were fixed. Latest run 42418697169 (run #195) passed both jobs, including Prettier, TypeScript typecheck, 13 TypeScript tests, npm high-severity audit, Ruff lint/format and 29 Python tests. The initial npm install reported two critical and two moderate advisories; after upgrading Vitest and Ajv, the high-severity audit gate passes.
-- [ ] Add stronger property/fuzz tests for protocol parsing and request lifecycle under concurrency.
+- [x] Add deterministic malformed-input fuzz coverage and a concurrent duplicate-request-ID registration test; make the active-ID registry thread-safe.
 - [x] Extend synthetic MT5 fixtures for duplicate/out-of-order history delivery, bounded overlap synchronisation, broker/server time and DST edge cases.
-- [ ] Close or explicitly record the remaining compatibility/toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md).
+- [x] Record unresolved compatibility, toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md); OPEN-01 and OPEN-13 remain blocking until validated and decided.
+
+### Outstanding external validation gates
+
+The following cannot be truthfully closed from the current Linux/GitHub-only execution environment and remain Phase 0 blockers:
+- [ ] Generate and commit `package-lock.json` and a fully resolved Python lockfile using the supported package registries; no lockfile has been fabricated from direct pins.
+- [ ] Run clean-install and compatibility checks on Windows 10 and Windows 11 x64 with the agreed Python, MetaTrader5 package and terminal-build matrix. This requires actual target systems and a broker/terminal installation.
+- [ ] Close OPEN-01 (Windows/Python/MetaTrader5 compatibility) and OPEN-13 (protocol schema tooling) in the decision register with evidence and an explicit decision.
+
+### Review workflow limitation
+
+The prescribed two-axis Standards/Spec review has **not** been completed. The Build review workflow requires `docs/agents/issue-tracker.md`; that file is absent from this repository (the similarly named `docs/agents/issuetracker` path is also absent). The review workflow explicitly requires the project to run `/setup-matt-pocock-skills` to install/provide the issue-tracker integration before the review can be performed. CI success is not a substitute for that independent review. Do not mark the PR ready or begin Phase 1 until this review gate and the external validation gates above are resolved.
 
 ## Validation evidence
 
 - Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **29 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
 - TypeScript CI: Prettier check, full tsc --noEmit and all 13 Vitest/Ajv tests passed in run #195.
-- GitHub Actions: latest run #195 (42418697169) passed both TypeScript and Python jobs on the current PR head.
+- GitHub Actions: run #197 (42418765126) completed successfully for the tracked commit; run #195 (42418697169) also passed both jobs. The new fuzz/concurrency tests in this increment require a fresh CI run before their results can be claimed.
 - Windows/MT5 compatibility: not yet tested.
+- Review workflow: blocked by the missing `docs/agents/issue-tracker.md` integration.
 
 ## Delivery discipline
 
