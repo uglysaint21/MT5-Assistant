@@ -1,19 +1,24 @@
 import { describe, expect, it } from "vitest";
+import requestFixture from "../../protocol/fixtures/request-account-snapshot.json" with { type: "json" };
+import readyFixture from "../../protocol/fixtures/ready.json" with { type: "json" };
+import successFixture from "../../protocol/fixtures/response-success.json" with { type: "json" };
+import errorFixture from "../../protocol/fixtures/response-error.json" with { type: "json" };
+import eventFixture from "../../protocol/fixtures/event-sync-progress.json" with { type: "json" };
 import { isProtocolEnvelope, isProtocolResponse } from "../src/shared/protocol.js";
 
 describe("protocol envelope validation", () => {
-  it("accepts a successful response", () => {
-    expect(isProtocolResponse({
-      kind: "response", protocolVersion: 1, requestId: "req-1",
-      ok: true, result: { connected: false }
-    })).toBe(true);
+  it("accepts shared request and handshake golden fixtures", () => {
+    expect(isProtocolEnvelope(requestFixture)).toBe(true);
+    expect(isProtocolEnvelope(readyFixture)).toBe(true);
   });
 
-  it("accepts a structured error response", () => {
-    expect(isProtocolResponse({
-      kind: "response", protocolVersion: 1, requestId: "req-2",
-      ok: false, error: { code: "TERMINAL_DISCONNECTED", message: "Disconnected", retryable: true }
-    })).toBe(true);
+  it("accepts shared success and error response golden fixtures", () => {
+    expect(isProtocolResponse(successFixture)).toBe(true);
+    expect(isProtocolResponse(errorFixture)).toBe(true);
+  });
+
+  it("accepts the shared UTC event golden fixture", () => {
+    expect(isProtocolEnvelope(eventFixture)).toBe(true);
   });
 
   it("rejects unsupported versions, malformed errors and unknown response fields", () => {
@@ -51,13 +56,14 @@ describe("protocol envelope validation", () => {
     })).toBe(false);
   });
 
-  it("accepts UTC events and rejects invalid timestamps", () => {
-    expect(isProtocolEnvelope({
-      kind: "event", protocolVersion: 1, eventId: "evt-1",
-      event: "sync.progress", occurredAt: "2026-11-07T18:00:00Z", payload: {}
-    })).toBe(true);
+  it("accepts UTC events and rejects invalid or non-UTC timestamps", () => {
+    expect(isProtocolEnvelope(eventFixture)).toBe(true);
     expect(isProtocolEnvelope({
       kind: "event", protocolVersion: 1, eventId: "evt-2",
+      event: "sync.progress", occurredAt: "not-a-time", payload: {}
+    })).toBe(false);
+    expect(isProtocolEnvelope({
+      kind: "event", protocolVersion: 1, eventId: "evt-3",
       event: "sync.progress", occurredAt: "2026-11-07T18:00:00+03:00", payload: {}
     })).toBe(false);
   });
