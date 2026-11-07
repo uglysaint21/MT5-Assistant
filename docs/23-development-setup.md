@@ -17,7 +17,7 @@ npm run typecheck
 npm test
 ```
 
-The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 5.1.0, Ajv 8.17.1, ajv-formats 3.0.1 and @types/node 22.19.0. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
+The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 5.1.0, Ajv 8.20.0 and @types/node 22.19.0. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
 
 ## Python service
 
