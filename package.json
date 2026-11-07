@@ -8,7 +8,10 @@
   ],
   "scripts": {
     "typecheck": "npm --workspace desktop run typecheck",
-    "test": "npm --workspace desktop run test"
+    "test": "npm --workspace desktop run test",
+    "format": "prettier --write \"desktop/src/**/*.ts\" \"desktop/tests/**/*.ts\" \"desktop/*.json\" \"protocol/**/*.json\" \"docs/22-implementation-status.md\" \"docs/23-development-setup.md\" \"docs/24-phase-0-security-threat-model.md\"",
+    "format:check": "prettier --check \"desktop/src/**/*.ts\" \"desktop/tests/**/*.ts\" \"desktop/*.json\" \"protocol/**/*.json\" \"docs/22-implementation-status.md\" \"docs/23-development-setup.md\" \"docs/24-phase-0-security-threat-model.md\"",
+    "lint": "python -m ruff check python"
   },
   "engines": {
     "node": ">=22.12 <25",
