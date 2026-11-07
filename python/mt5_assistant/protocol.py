@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from datetime import datetime
 from typing import Any
 
@@ -23,18 +24,21 @@ class ActiveRequestIds:
             raise ValueError("max_active must be positive.")
         self._active: set[str] = set()
         self._max_active = max_active
+        self._lock = threading.Lock()
 
     def register(self, request_id: str) -> None:
         if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 128:
             raise ProtocolError("Request ID must be a non-empty string.")
-        if request_id in self._active:
-            raise ProtocolError("Duplicate active request ID.")
-        if len(self._active) >= self._max_active:
-            raise ProtocolError("Maximum number of active requests reached.")
-        self._active.add(request_id)
+        with self._lock:
+            if request_id in self._active:
+                raise ProtocolError("Duplicate active request ID.")
+            if len(self._active) >= self._max_active:
+                raise ProtocolError("Maximum number of active requests reached.")
+            self._active.add(request_id)
 
     def release(self, request_id: str) -> None:
-        self._active.discard(request_id)
+        with self._lock:
+            self._active.discard(request_id)
 
 
 def _reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
