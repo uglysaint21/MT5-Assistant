@@ -15,8 +15,8 @@ A checked item means code or automation exists in the repository; it does not im
 - [x] Add Python JSON Lines framing with a 1 MiB frame bound, protocol-version validation and duplicate JSON-key rejection.
 - [x] Add strict Python envelope validation, including exact-field checks and UTC event timestamps.
 - [x] Add a bounded active request-ID registry that rejects duplicate in-flight IDs.
-- [x] Define a stable protocol error-code catalogue with safe messages, retryability and recovery guidance.
-- [x] Define a capability registry, explicitly marking all runtime capabilities as planned and listing prohibited trade-entry capabilities.
+- [x] Define a stable protocol error-code catalogue with safe messages, retryability and recovery guidance; add coverage tests for the required error set.
+- [x] Define explicit operation and capability registries, marking all operations as planned, mapping operations to capabilities, and listing prohibited trade-entry actions.
 - [x] Add shared protocol golden fixtures and validate them in Python and TypeScript test suites.
 - [x] Add Ajv and Python jsonschema-based schema validation tests.
 - [x] Add malformed JSON, oversized frame, duplicate-key, duplicate-active-ID, unknown-field, invalid timestamp, malformed envelope and unsupported-version tests.
@@ -35,7 +35,7 @@ A checked item means code or automation exists in the repository; it does not im
 
 ## Validation evidence
 
-- Python protocol, schema and fixture tests: **21 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
+- Python protocol, schema, fixture, operation-registry and error-catalogue tests: **27 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
 - TypeScript protocol source: strict tsc --noEmit check passed using the globally available TypeScript compiler. The complete Vitest/Ajv suite has not yet been run because package installation was unavailable in the isolated environment.
 - GitHub Actions: no workflow run was returned for the current PR head at the last check; do not treat the workflow definition as a passing CI result.
 - Windows/MT5 compatibility: not yet tested.
