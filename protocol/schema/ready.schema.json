@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mt5-assistant.local/schemas/ready.schema.json",
+  "title": "MT5 Assistant service ready handshake",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "protocolVersion", "serviceVersion", "capabilities"],
+  "properties": {
+    "kind": { "const": "ready" },
+    "protocolVersion": { "const": 1 },
+    "serviceVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "capabilities": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}
