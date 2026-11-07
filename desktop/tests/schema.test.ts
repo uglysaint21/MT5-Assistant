@@ -15,7 +15,7 @@ const ajv = new Ajv2020({ allErrors: true });
 ajv.addFormat("date-time", {
   type: "string",
   validate: (value: string) => {
-    if (!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$/.test(value)) {
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value)) {
       return false;
     }
     const parsed = new Date(value);
