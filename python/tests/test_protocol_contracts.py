@@ -147,3 +147,11 @@ def test_active_request_registry_rejects_overlong_ids():
 
     with pytest.raises(ProtocolError):
         ActiveRequestIds().register("x" * 129)
+
+
+def test_encoder_rejects_non_json_numeric_values():
+    with pytest.raises(ProtocolError, match="serializable"):
+        encode_frame({
+            "kind": "response", "protocolVersion": 1, "requestId": "req-nan",
+            "ok": True, "result": {"value": float("nan")}
+        })
