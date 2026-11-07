@@ -18,6 +18,11 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Audit npm dependencies
+        run: |
+          npm audit --json > npm-audit.json || true
+          node -e "const a=require('./npm-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities ?? {})) console.log(name, v.severity, JSON.stringify(v.via));"
+          npm audit --audit-level=high
       - run: npm run typecheck
       - run: npm test
 
