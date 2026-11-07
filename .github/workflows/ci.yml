@@ -23,6 +23,7 @@ jobs:
           npm audit --json > npm-audit.json || true
           node -e "const a=require('./npm-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities ?? {})) console.log(name, v.severity, JSON.stringify(v.via));"
           npm audit --audit-level=high
+      - run: npm run format:check
       - run: npm run typecheck
       - run: npm test
 
@@ -34,4 +35,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -e "python[dev]"
+      - run: python -m ruff check python
+      - run: python -m ruff format --check python
       - run: pytest python/tests
