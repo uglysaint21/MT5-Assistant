@@ -13,11 +13,12 @@ From the repository root:
 
 ```bash
 npm install
+npm run format:check
 npm run typecheck
 npm test
 ```
 
-The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 5.1.0, Ajv 8.20.0 and @types/node 22.19.0. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
+The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 5.1.0, Ajv 8.20.0, Prettier 3.9.10 and @types/node 22.19.0. Run npm run format to apply the configured Prettier formatting. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
 
 ## Python service
 
@@ -30,10 +31,12 @@ python -m venv .venv
 # macOS/Linux:
 # source .venv/bin/activate
 python -m pip install -e "python[dev]"
+python -m ruff check python
+python -m ruff format --check python
 pytest python/tests
 ```
 
-The Python development extras include pytest and jsonschema. Their supported ranges are declared in python/pyproject.toml; a fully resolved Python lockfile is still pending.
+The Python development extras include pytest, jsonschema and Ruff 0.17.4. Run python -m ruff format python to apply formatting. Supported versions are declared in python/pyproject.toml; a fully resolved Python lockfile is still pending.
 
 ## Process protocol
 
