@@ -93,3 +93,26 @@ def test_rejects_invalid_timestamp_and_unknown_envelope_kind():
         validate_envelope(event)
     with pytest.raises(ProtocolError):
         validate_envelope({"kind": "mystery", "protocolVersion": 1})
+
+
+def test_rejects_boolean_protocol_version():
+    with pytest.raises(ProtocolError):
+        decode_frame('{"protocolVersion":true,"kind":"request"}')
+
+
+def test_rejects_duplicate_active_request_ids_until_released():
+    from mt5_assistant.protocol import ActiveRequestIds
+
+    active = ActiveRequestIds()
+    active.register("request-1")
+    with pytest.raises(ProtocolError, match="duplicate"):
+        active.register("request-1")
+    active.release("request-1")
+    active.register("request-1")
+
+
+def test_active_request_registry_rejects_empty_ids():
+    from mt5_assistant.protocol import ActiveRequestIds
+
+    with pytest.raises(ProtocolError):
+        ActiveRequestIds().register("")
