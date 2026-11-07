@@ -75,6 +75,28 @@ function isNonEmptyString(value: unknown, maxLength = 256): value is string {
   return typeof value === "string" && value.trim().length > 0 && value.length <= maxLength;
 }
 
+function isUtcTimestamp(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  const match = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,6})?Z$/.exec(value);
+  if (!match) return false;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const hour = Number(match[4]);
+  const minute = Number(match[5]);
+  const second = Number(match[6]);
+  const date = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+  return Number.isFinite(date.getTime()) &&
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day &&
+    date.getUTCHours() === hour &&
+    date.getUTCMinutes() === minute &&
+    date.getUTCSeconds() === second;
+}
+
 function isErrorPayload(value: unknown): value is ErrorResponse["error"] {
   if (!isRecord(value) ||
       !hasExactKeys(value, ["code", "message", "retryable"], ["details"])) return false;
