@@ -1,4 +1,5 @@
-import Ajv, { type AnySchema } from "ajv";
+import Ajv2020 from "ajv/dist/2020.js";
+import type { AnySchema } from "ajv";
 import addFormats from "ajv-formats";
 import { describe, expect, it } from "vitest";
 import requestSchema from "../../protocol/schema/request.schema.json" with { type: "json" };
@@ -11,7 +12,7 @@ import successFixture from "../../protocol/fixtures/response-success.json" with 
 import errorFixture from "../../protocol/fixtures/response-error.json" with { type: "json" };
 import eventFixture from "../../protocol/fixtures/event-sync-progress.json" with { type: "json" };
 
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv2020({ allErrors: true });
 addFormats(ajv);
 
 describe("shared JSON Schema contracts", () => {
