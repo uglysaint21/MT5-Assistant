@@ -5,7 +5,8 @@ from mt5_assistant.protocol import ProtocolError, decode_frame, encode_frame
 
 def test_decodes_valid_versioned_object():
     assert decode_frame('{"protocolVersion":1,"kind":"request"}') == {
-        "protocolVersion": 1, "kind": "request"
+        "protocolVersion": 1,
+        "kind": "request",
     }
 
 
@@ -22,4 +23,6 @@ def test_rejects_unsupported_protocol_version():
 
 
 def test_encodes_one_json_line():
-    assert encode_frame({"protocolVersion": 1, "kind": "ready", "serviceVersion": "0.1.0", "capabilities": []}).endswith("\n")
+    assert encode_frame(
+        {"protocolVersion": 1, "kind": "ready", "serviceVersion": "0.1.0", "capabilities": []}
+    ).endswith("\n")
