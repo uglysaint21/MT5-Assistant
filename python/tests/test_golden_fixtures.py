@@ -52,3 +52,22 @@ def test_mt5_fixture_covers_required_account_and_history_edge_cases():
         for position in account["positions"]:
             assert isinstance(position["volume"], str)
             assert isinstance(position["floatingProfit"], str)
+
+
+def test_operation_registry_is_allow_listed_and_has_no_trade_entry_operation():
+    registry = json.loads((ROOT / "protocol" / "operations.json").read_text(encoding="utf-8"))
+    operation_ids = {operation["id"] for operation in registry["operations"]}
+    assert len(operation_ids) == len(registry["operations"])
+    assert registry["managementActions"] == [
+        "MODIFY_POSITION",
+        "PARTIAL_CLOSE_POSITION",
+        "CLOSE_POSITION",
+        "CLOSE_ALL_POSITIONS",
+        "MODIFY_PENDING_ORDER",
+        "CANCEL_PENDING_ORDER",
+    ]
+    assert not any("open" in operation_id.lower() or "placeorder" in operation_id.lower()
+                   for operation_id in operation_ids)
+    assert registry["prohibitedOperations"] == [
+        "trade.openPosition", "trade.openPendingOrder", "trade.placeOrder"
+    ]
