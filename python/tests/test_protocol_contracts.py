@@ -160,3 +160,44 @@ def test_encoder_rejects_non_json_numeric_values():
                 "result": {"value": float("nan")},
             }
         )
+
+
+def test_active_request_registry_is_safe_under_concurrent_duplicate_registration():
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    from mt5_assistant.protocol import ActiveRequestIds
+
+    active = ActiveRequestIds()
+    barrier = Barrier(16)
+
+    def register_same_id():
+        barrier.wait()
+        try:
+            active.register("shared-request")
+            return "registered"
+        except ProtocolError:
+            return "rejected"
+
+    with ThreadPoolExecutor(max_workers=16) as executor:
+        outcomes = list(executor.map(lambda _: register_same_id(), range(16)))
+
+    assert outcomes.count("registered") == 1
+    assert outcomes.count("rejected") == 15
+
+
+def test_frame_decoder_survives_deterministic_malformed_input_fuzz_cases():
+    import random
+    import string
+
+    randomizer = random.Random(20261108)
+    alphabet = string.printable + "雪💹\u0000"
+    for _ in range(500):
+        candidate = "".join(
+            randomizer.choice(alphabet) for _ in range(randomizer.randint(0, 160))
+        )
+        try:
+            decoded = decode_frame(candidate)
+        except ProtocolError:
+            continue
+        assert isinstance(decoded, dict)
