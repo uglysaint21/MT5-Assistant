@@ -1,0 +1,12 @@
+{
+  "name": "mt5-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first MetaTrader 5 desktop monitoring and analysis application",
+  "workspaces": ["desktop"],
+  "scripts": {
+    "typecheck": "npm --workspace desktop run typecheck",
+    "test": "npm --workspace desktop run test"
+  },
+  "engines": { "node": ">=22 <25", "npm": ">=10" }
+}
