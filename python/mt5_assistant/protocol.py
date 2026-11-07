@@ -162,7 +162,7 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
 def encode_frame(message: dict[str, Any]) -> str:
     validate_envelope(message)
     try:
-        encoded = json.dumps(message, separators=(",", ":"), ensure_ascii=False) + "\n"
+        encoded = json.dumps(message, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n"
     except (TypeError, ValueError) as exc:
         raise ProtocolError("Protocol message is not JSON serializable.") from exc
     if len(encoded.encode("utf-8")) > MAX_FRAME_BYTES:
