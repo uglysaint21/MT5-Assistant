@@ -35,7 +35,7 @@ describe("shared JSON Schema contracts", () => {
   });
 
   it("rejects unexpected request fields", () => {
-    const validate = ajv.compile(requestSchema);
+    const validate = ajv.compile(requestSchema as AnySchema);
     expect(validate({
       ...requestFixture,
       injected: true
