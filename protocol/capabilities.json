@@ -1,0 +1,24 @@
+{
+  "protocolVersion": 1,
+  "capabilities": [
+    { "id": "account.read", "status": "planned", "description": "Read connected account and live account snapshots." },
+    { "id": "history.sync", "status": "planned", "description": "Synchronise initial and incremental account history." },
+    { "id": "analytics.read", "status": "planned", "description": "Read canonical Python-calculated analytics." },
+    { "id": "ea.read", "status": "planned", "description": "Read EA attribution, instances and runtime evidence." },
+    { "id": "alerts.read", "status": "planned", "description": "Read alert state and notification history." },
+    { "id": "trade.modifyPosition", "status": "planned", "description": "Modify an existing position under backend safeguards." },
+    { "id": "trade.partialClosePosition", "status": "planned", "description": "Partially close an existing position under backend safeguards." },
+    { "id": "trade.closePosition", "status": "planned", "description": "Close an existing position under backend safeguards." },
+    { "id": "trade.closeAllPositions", "status": "planned", "description": "Attempt to close all open positions with explicit confirmation." },
+    { "id": "trade.modifyPendingOrder", "status": "planned", "description": "Modify an existing pending order under backend safeguards." },
+    { "id": "trade.cancelPendingOrder", "status": "planned", "description": "Cancel an existing pending order under backend safeguards." },
+    { "id": "reports.export", "status": "planned", "description": "Generate user-requested PDF, XLSX or CSV exports." }
+  ],
+  "prohibitedCapabilities": [
+    "trade.openPosition",
+    "trade.openPendingOrder",
+    "trade.placeOrder",
+    "trade.runStrategy"
+  ],
+  "note": "Registry entries marked planned are not implemented and must not be advertised by the runtime handshake. Capability advertisement is descriptive and never substitutes for backend authorization."
+}
