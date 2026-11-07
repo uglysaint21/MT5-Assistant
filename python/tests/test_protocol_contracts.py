@@ -26,7 +26,7 @@ def test_encodes_one_json_line():
 
 
 def test_rejects_duplicate_json_object_keys():
-    with pytest.raises(ProtocolError, match="duplicate"):
+    with pytest.raises(ProtocolError, match="Duplicate"):
         decode_frame('{"protocolVersion":1,"kind":"request","kind":"event"}')
 
 
@@ -116,3 +116,12 @@ def test_active_request_registry_rejects_empty_ids():
 
     with pytest.raises(ProtocolError):
         ActiveRequestIds().register("")
+
+
+def test_active_request_registry_enforces_capacity():
+    from mt5_assistant.protocol import ActiveRequestIds
+
+    active = ActiveRequestIds(max_active=1)
+    active.register("request-1")
+    with pytest.raises(ProtocolError, match="Maximum"):
+        active.register("request-2")
