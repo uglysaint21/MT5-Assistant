@@ -9,6 +9,9 @@ __pycache__/
 dist/
 build/
 coverage/
+.vitest/
+npm-audit.json
+*.egg-info/
 *.py[cod]
 .env
 .env.*
