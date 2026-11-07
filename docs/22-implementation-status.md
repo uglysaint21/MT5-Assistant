@@ -20,7 +20,7 @@ A checked item means code or automation exists in the repository; it does not im
 - [x] Add shared protocol golden fixtures and validate them in Python and TypeScript test suites.
 - [x] Add Ajv and Python jsonschema-based schema validation tests.
 - [x] Add malformed JSON, oversized frame, duplicate-key, duplicate-active-ID, unknown-field, invalid timestamp, malformed envelope and unsupported-version tests.
-- [x] Add synthetic MT5 netting/hedging account and history fixtures covering partial closes, commissions, swaps, deposits, withdrawals, broker symbol suffixes and distinct position IDs.
+- [x] Add synthetic MT5 netting/hedging account and history fixtures covering partial closes, commissions, swaps, deposits, withdrawals, broker symbol suffixes, distinct position IDs and decimal-safe position-volume reconciliation.
 - [x] Add GitHub Actions jobs for TypeScript and Python verification.
 - [x] Add baseline generated-artifact, environment and secret exclusions.
 - [x] Document developer setup and the Phase 0 security threat model/test mapping.
@@ -35,7 +35,7 @@ A checked item means code or automation exists in the repository; it does not im
 
 ## Validation evidence
 
-- Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **28 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
+- Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **29 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
 - TypeScript protocol source: strict tsc --noEmit check passed using the globally available TypeScript compiler. The complete Vitest/Ajv suite has not yet been run because package installation was unavailable in the isolated environment.
 - GitHub Actions: no workflow run was returned for the current PR head at the last check; do not treat the workflow definition as a passing CI result.
 - Windows/MT5 compatibility: not yet tested.
