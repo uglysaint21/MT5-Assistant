@@ -15,8 +15,11 @@ def test_rejects_oversized_frame():
 
 def test_validates_request_envelope_and_rejects_unknown_fields():
     request = {
-        "kind": "request", "protocolVersion": 1, "requestId": "req-1",
-        "operation": "account.getSnapshot", "payload": {}
+        "kind": "request",
+        "protocolVersion": 1,
+        "requestId": "req-1",
+        "operation": "account.getSnapshot",
+        "payload": {},
     }
     assert validate_envelope(request) == request
     with pytest.raises(ProtocolError, match="unknown"):
@@ -25,15 +28,18 @@ def test_validates_request_envelope_and_rejects_unknown_fields():
 
 def test_validates_success_and_error_responses():
     success = {
-        "kind": "response", "protocolVersion": 1, "requestId": "req-1",
-        "ok": True, "result": {}
+        "kind": "response",
+        "protocolVersion": 1,
+        "requestId": "req-1",
+        "ok": True,
+        "result": {},
     }
     error = {
-        "kind": "response", "protocolVersion": 1, "requestId": "req-1",
-        "ok": False, "error": {
-            "code": "TERMINAL_DISCONNECTED", "message": "Disconnected",
-            "retryable": True
-        }
+        "kind": "response",
+        "protocolVersion": 1,
+        "requestId": "req-1",
+        "ok": False,
+        "error": {"code": "TERMINAL_DISCONNECTED", "message": "Disconnected", "retryable": True},
     }
     assert validate_envelope(success) == success
     assert validate_envelope(error) == error
@@ -41,8 +47,12 @@ def test_validates_success_and_error_responses():
 
 def test_rejects_response_with_both_result_and_error():
     invalid = {
-        "kind": "response", "protocolVersion": 1, "requestId": "req-1",
-        "ok": True, "result": {}, "error": {}
+        "kind": "response",
+        "protocolVersion": 1,
+        "requestId": "req-1",
+        "ok": True,
+        "result": {},
+        "error": {},
     }
     with pytest.raises(ProtocolError):
         validate_envelope(invalid)
@@ -50,13 +60,18 @@ def test_rejects_response_with_both_result_and_error():
 
 def test_validates_ready_and_event_envelopes():
     ready = {
-        "kind": "ready", "protocolVersion": 1, "serviceVersion": "0.1.0",
-        "capabilities": ["account.read"]
+        "kind": "ready",
+        "protocolVersion": 1,
+        "serviceVersion": "0.1.0",
+        "capabilities": ["account.read"],
     }
     event = {
-        "kind": "event", "protocolVersion": 1, "eventId": "evt-1",
-        "event": "sync.progress", "occurredAt": "2026-11-07T18:00:00Z",
-        "payload": {}
+        "kind": "event",
+        "protocolVersion": 1,
+        "eventId": "evt-1",
+        "event": "sync.progress",
+        "occurredAt": "2026-11-07T18:00:00Z",
+        "payload": {},
     }
     assert validate_envelope(ready) == ready
     assert validate_envelope(event) == event
@@ -64,8 +79,12 @@ def test_validates_ready_and_event_envelopes():
 
 def test_rejects_invalid_timestamp_and_unknown_envelope_kind():
     event = {
-        "kind": "event", "protocolVersion": 1, "eventId": "evt-1",
-        "event": "sync.progress", "occurredAt": "not-a-time", "payload": {}
+        "kind": "event",
+        "protocolVersion": 1,
+        "eventId": "evt-1",
+        "event": "sync.progress",
+        "occurredAt": "not-a-time",
+        "payload": {},
     }
     with pytest.raises(ProtocolError):
         validate_envelope(event)
@@ -112,9 +131,12 @@ def test_rejects_non_json_numeric_constants():
 
 def test_rejects_non_zulu_event_timestamps_to_match_schema():
     event = {
-        "kind": "event", "protocolVersion": 1, "eventId": "evt-offset",
-        "event": "sync.progress", "occurredAt": "2026-11-07T18:00:00+00:00",
-        "payload": {}
+        "kind": "event",
+        "protocolVersion": 1,
+        "eventId": "evt-offset",
+        "event": "sync.progress",
+        "occurredAt": "2026-11-07T18:00:00+00:00",
+        "payload": {},
     }
     with pytest.raises(ProtocolError):
         validate_envelope(event)
@@ -129,7 +151,12 @@ def test_active_request_registry_rejects_overlong_ids():
 
 def test_encoder_rejects_non_json_numeric_values():
     with pytest.raises(ProtocolError, match="serializable"):
-        encode_frame({
-            "kind": "response", "protocolVersion": 1, "requestId": "req-nan",
-            "ok": True, "result": {"value": float("nan")}
-        })
+        encode_frame(
+            {
+                "kind": "response",
+                "protocolVersion": 1,
+                "requestId": "req-nan",
+                "ok": True,
+                "result": {"value": float("nan")},
+            }
+        )
