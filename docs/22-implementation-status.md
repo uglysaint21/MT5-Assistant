@@ -28,7 +28,7 @@ A checked item means code or automation exists in the repository; it does not im
 ### Remaining Phase 0 work
 - [ ] Validate the supported Windows 10/11, Python, MetaTrader5 package and terminal build compatibility matrix on clean target systems.
 - [ ] Generate and commit reproducible npm and Python dependency lockfiles. Direct desktop development dependencies are pinned, but transitive dependency resolution is not yet locked.
-- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. Python unit/schema tests and the TypeScript protocol source typecheck have been run in an isolated local verification workspace; the complete repository CI has not yet been observed passing.
+- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. The first observed run failed on TypeScript default-import interoperability and a case-sensitive Python test assertion; fixes and a patched Vitest upgrade are committed, but a passing run on the latest head is still required.
 - [ ] Add stronger property/fuzz tests for protocol parsing and request lifecycle under concurrency.
 - [x] Extend synthetic MT5 fixtures for duplicate/out-of-order history delivery, bounded overlap synchronisation, broker/server time and DST edge cases.
 - [ ] Close or explicitly record the remaining compatibility/toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md).
