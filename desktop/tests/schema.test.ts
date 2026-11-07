@@ -19,9 +19,8 @@ ajv.addFormat("date-time", {
       return false;
     }
     const parsed = new Date(value);
-    return !Number.isNaN(parsed.getTime()) &&
-      parsed.toISOString().startsWith(value.slice(0, 19));
-  }
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value.slice(0, 19));
+  },
 });
 
 describe("shared JSON Schema contracts", () => {
@@ -45,24 +44,29 @@ describe("shared JSON Schema contracts", () => {
 
   it("rejects unexpected request fields", () => {
     const validate = ajv.compile(requestSchema as AnySchema);
-    expect(validate({
-      ...requestFixture,
-      injected: true
-    })).toBe(false);
+    expect(
+      validate({
+        ...requestFixture,
+        injected: true,
+      }),
+    ).toBe(false);
   });
 });
-
 
 describe("UTC event timestamp schema", () => {
   it("rejects impossible calendar dates and non-UTC offsets", () => {
     const validate = ajv.compile(eventSchema as AnySchema);
-    expect(validate({
-      ...eventFixture,
-      occurredAt: "2026-02-30T18:00:00Z"
-    })).toBe(false);
-    expect(validate({
-      ...eventFixture,
-      occurredAt: "2026-11-07T18:00:00+00:00"
-    })).toBe(false);
+    expect(
+      validate({
+        ...eventFixture,
+        occurredAt: "2026-02-30T18:00:00Z",
+      }),
+    ).toBe(false);
+    expect(
+      validate({
+        ...eventFixture,
+        occurredAt: "2026-11-07T18:00:00+00:00",
+      }),
+    ).toBe(false);
   });
 });
