@@ -26,7 +26,7 @@ def test_encodes_one_json_line():
 
 
 def test_rejects_duplicate_json_object_keys():
-    with pytest.raises(ProtocolError, match="Duplicate"):
+    with pytest.raises(ProtocolError, match="duplicate"):
         decode_frame('{"protocolVersion":1,"kind":"request","kind":"event"}')
 
 
