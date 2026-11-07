@@ -152,9 +152,7 @@ export function isProtocolEnvelope(value: unknown): value is ProtocolEnvelope {
       isNonEmptyString(value.eventId, 128) &&
       isNonEmptyString(value.event, 128) &&
       isRecord(value.payload) &&
-      typeof value.occurredAt === "string" &&
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value.occurredAt) &&
-      !Number.isNaN(Date.parse(value.occurredAt));
+      isUtcTimestamp(value.occurredAt);
   }
 
   return false;
