@@ -6,6 +6,7 @@
     { "id": "analytics.read", "status": "planned", "description": "Read canonical Python-calculated analytics." },
     { "id": "ea.read", "status": "planned", "description": "Read EA attribution, instances and runtime evidence." },
     { "id": "alerts.read", "status": "planned", "description": "Read alert state and notification history." },
+    { "id": "trade.manage", "status": "planned", "description": "Backend-authorised, confirmed position and pending-order management actions only." },
     { "id": "trade.modifyPosition", "status": "planned", "description": "Modify an existing position under backend safeguards." },
     { "id": "trade.partialClosePosition", "status": "planned", "description": "Partially close an existing position under backend safeguards." },
     { "id": "trade.closePosition", "status": "planned", "description": "Close an existing position under backend safeguards." },
