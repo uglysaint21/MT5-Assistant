@@ -125,3 +125,25 @@ def test_active_request_registry_enforces_capacity():
     active.register("request-1")
     with pytest.raises(ProtocolError, match="Maximum"):
         active.register("request-2")
+
+
+def test_rejects_non_json_numeric_constants():
+    with pytest.raises(ProtocolError, match="JSON"):
+        decode_frame('{"protocolVersion":1,"value":NaN}')
+
+
+def test_rejects_non_zulu_event_timestamps_to_match_schema():
+    event = {
+        "kind": "event", "protocolVersion": 1, "eventId": "evt-offset",
+        "event": "sync.progress", "occurredAt": "2026-11-07T18:00:00+00:00",
+        "payload": {}
+    }
+    with pytest.raises(ProtocolError):
+        validate_envelope(event)
+
+
+def test_active_request_registry_rejects_overlong_ids():
+    from mt5_assistant.protocol import ActiveRequestIds
+
+    with pytest.raises(ProtocolError):
+        ActiveRequestIds().register("x" * 129)
