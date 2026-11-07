@@ -13,6 +13,7 @@ MAX_ACTIVE_REQUESTS = 1_024
 class ProtocolError(ValueError):
     """Raised when a process-protocol frame is invalid."""
 
+
 class ActiveRequestIds:
     """Bounded registry that rejects duplicate IDs while requests are in flight."""
 
@@ -33,6 +34,7 @@ class ActiveRequestIds:
 
     def release(self, request_id: str) -> None:
         self._active.discard(request_id)
+
 
 def _reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
@@ -55,14 +57,19 @@ def decode_frame(line: str) -> dict[str, Any]:
     if len(encoded) > MAX_FRAME_BYTES:
         raise ProtocolError("Protocol frame exceeds the maximum size.")
     try:
-        value = json.loads(line, object_pairs_hook=_reject_duplicate_keys, parse_constant=_reject_non_json_constant)
+        value = json.loads(
+            line, object_pairs_hook=_reject_duplicate_keys, parse_constant=_reject_non_json_constant
+        )
     except ProtocolError:
         raise
     except (json.JSONDecodeError, UnicodeEncodeError) as exc:
         raise ProtocolError("Protocol frame is not valid UTF-8 JSON.") from exc
     if not isinstance(value, dict):
         raise ProtocolError("Protocol frame must be a JSON object.")
-    if type(value.get("protocolVersion")) is not int or value.get("protocolVersion") != PROTOCOL_VERSION:
+    if (
+        type(value.get("protocolVersion")) is not int
+        or value.get("protocolVersion") != PROTOCOL_VERSION
+    ):
         raise ProtocolError("Unsupported protocol version.")
     return value
 
@@ -76,7 +83,9 @@ def _require_exact_keys(
     if missing:
         raise ProtocolError(f"Protocol envelope is missing fields: {', '.join(sorted(missing))}")
     if unknown:
-        raise ProtocolError(f"Protocol envelope contains unknown fields: {', '.join(sorted(unknown))}")
+        raise ProtocolError(
+            f"Protocol envelope contains unknown fields: {', '.join(sorted(unknown))}"
+        )
 
 
 def _require_nonempty_string(value: Any, field: str, max_length: int = 256) -> None:
@@ -88,19 +97,26 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
     """Validate one complete protocol-v1 envelope and return it unchanged."""
     if not isinstance(message, dict):
         raise ProtocolError("Protocol envelope must be an object.")
-    if type(message.get("protocolVersion")) is not int or message.get("protocolVersion") != PROTOCOL_VERSION:
+    if (
+        type(message.get("protocolVersion")) is not int
+        or message.get("protocolVersion") != PROTOCOL_VERSION
+    ):
         raise ProtocolError("Unsupported protocol version.")
 
     kind = message.get("kind")
     if kind == "request":
-        _require_exact_keys(message, {"kind", "protocolVersion", "requestId", "operation", "payload"})
+        _require_exact_keys(
+            message, {"kind", "protocolVersion", "requestId", "operation", "payload"}
+        )
         _require_nonempty_string(message["requestId"], "requestId", 128)
         _require_nonempty_string(message["operation"], "operation", 128)
         if not isinstance(message["payload"], dict):
             raise ProtocolError("Protocol request payload must be an object.")
 
     elif kind == "response":
-        _require_exact_keys(message, {"kind", "protocolVersion", "requestId", "ok"}, {"result", "error"})
+        _require_exact_keys(
+            message, {"kind", "protocolVersion", "requestId", "ok"}, {"result", "error"}
+        )
         _require_nonempty_string(message["requestId"], "requestId", 128)
         if not isinstance(message["ok"], bool):
             raise ProtocolError("Protocol response 'ok' must be boolean.")
@@ -130,14 +146,16 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(capabilities, list) or any(
             not isinstance(item, str) or not item.strip() for item in capabilities
         ):
-            raise ProtocolError("Protocol ready capabilities must be an array of non-empty strings.")
+            raise ProtocolError(
+                "Protocol ready capabilities must be an array of non-empty strings."
+            )
         if len(capabilities) != len(set(capabilities)):
             raise ProtocolError("Protocol ready capabilities must not contain duplicates.")
 
     elif kind == "event":
-        _require_exact_keys(message, {
-            "kind", "protocolVersion", "eventId", "event", "occurredAt", "payload"
-        })
+        _require_exact_keys(
+            message, {"kind", "protocolVersion", "eventId", "event", "occurredAt", "payload"}
+        )
         _require_nonempty_string(message["eventId"], "eventId", 128)
         _require_nonempty_string(message["event"], "event", 128)
         if not isinstance(message["payload"], dict):
@@ -148,7 +166,9 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
         try:
             parsed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         except ValueError as exc:
-            raise ProtocolError("Protocol event occurredAt must be a UTC ISO-8601 timestamp.") from exc
+            raise ProtocolError(
+                "Protocol event occurredAt must be a UTC ISO-8601 timestamp."
+            ) from exc
         if parsed.tzinfo is None or parsed.utcoffset().total_seconds() != 0:
             raise ProtocolError("Protocol event occurredAt must use UTC.")
     else:
@@ -160,7 +180,9 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
 def encode_frame(message: dict[str, Any]) -> str:
     validate_envelope(message)
     try:
-        encoded = json.dumps(message, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n"
+        encoded = (
+            json.dumps(message, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n"
+        )
     except (TypeError, ValueError) as exc:
         raise ProtocolError("Protocol message is not JSON serializable.") from exc
     if len(encoded.encode("utf-8")) > MAX_FRAME_BYTES:
