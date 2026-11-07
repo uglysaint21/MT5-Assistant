@@ -138,10 +138,6 @@
     "MODIFY_PENDING_ORDER",
     "CANCEL_PENDING_ORDER"
   ],
-  "prohibitedOperations": [
-    "trade.openPosition",
-    "trade.openPendingOrder",
-    "trade.placeOrder"
-  ],
+  "prohibitedOperations": ["trade.openPosition", "trade.openPendingOrder", "trade.placeOrder"],
   "note": "Every operation is currently planned, not implemented. Runtime dispatch must allow only registered operation IDs, verify the associated capability and enforce backend authorization. Management execution additionally requires explicit confirmation and reconciliation of uncertain outcomes."
 }
