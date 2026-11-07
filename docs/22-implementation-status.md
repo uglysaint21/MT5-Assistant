@@ -21,14 +21,14 @@ A checked item means code or automation exists in the repository; it does not im
 - [x] Add Ajv and Python jsonschema-based schema validation tests.
 - [x] Add malformed JSON, oversized frame, duplicate-key, duplicate-active-ID, unknown-field, invalid timestamp, malformed envelope and unsupported-version tests.
 - [x] Add synthetic MT5 netting/hedging account and history fixtures covering partial closes, commissions, swaps, deposits, withdrawals, broker symbol suffixes, distinct position IDs and decimal-safe position-volume reconciliation.
-- [x] Add GitHub Actions jobs for TypeScript and Python verification.
+- [x] Add GitHub Actions jobs for TypeScript and Python verification, including an npm high-severity dependency-audit gate.
 - [x] Add baseline generated-artifact, environment and secret exclusions.
 - [x] Document developer setup and the Phase 0 security threat model/test mapping.
 
 ### Remaining Phase 0 work
 - [ ] Validate the supported Windows 10/11, Python, MetaTrader5 package and terminal build compatibility matrix on clean target systems.
 - [ ] Generate and commit reproducible npm and Python dependency lockfiles. Direct desktop development dependencies are pinned, but transitive dependency resolution is not yet locked.
-- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. The first observed run failed on TypeScript default-import interoperability and a case-sensitive Python test assertion; fixes and a patched Vitest upgrade are committed, but a passing run on the latest head is still required.
+- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. PR run #108 failed on TypeScript default-import interoperability and a case-sensitive Python test assertion. Both fixes, a Vitest 5.1.0 security upgrade and an npm audit gate are committed; a passing run on the latest head is still required. The initial npm install reported two critical and two moderate advisories before the Vitest upgrade; the post-upgrade audit result is pending.
 - [ ] Add stronger property/fuzz tests for protocol parsing and request lifecycle under concurrency.
 - [x] Extend synthetic MT5 fixtures for duplicate/out-of-order history delivery, bounded overlap synchronisation, broker/server time and DST edge cases.
 - [ ] Close or explicitly record the remaining compatibility/toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md).
@@ -36,8 +36,8 @@ A checked item means code or automation exists in the repository; it does not im
 ## Validation evidence
 
 - Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **29 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
-- TypeScript protocol source: strict tsc --noEmit check passed using the globally available TypeScript compiler. The complete Vitest/Ajv suite has not yet been run because package installation was unavailable in the isolated environment.
-- GitHub Actions: no workflow run was returned for the current PR head at the last check; do not treat the workflow definition as a passing CI result.
+- TypeScript protocol source: strict tsc --noEmit check passed using global TypeScript 5.8.3. The full desktop typecheck failed in PR run #108 due to default-import interop settings; esModuleInterop and synthetic default imports have since been enabled. The complete Vitest/Ajv test suite has not yet completed successfully.
+- GitHub Actions: PR run #108 is a failed run on an earlier branch head. No completed rerun was returned for the latest head at the last check; do not treat the workflow definition or local isolated tests as a passing CI result.
 - Windows/MT5 compatibility: not yet tested.
 
 ## Delivery discipline
