@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "errors": {
+    "TERMINAL_NOT_FOUND": {
+      "retryable": false,
+      "message": "No MetaTrader 5 terminal was found.",
+      "recovery": "Select an installed terminal executable."
+    },
+    "TERMINAL_INITIALIZATION_FAILED": {
+      "retryable": true,
+      "message": "The MetaTrader 5 terminal could not be initialized.",
+      "recovery": "Check the terminal installation and try again."
+    },
+    "TERMINAL_DISCONNECTED": {
+      "retryable": true,
+      "message": "The MetaTrader 5 terminal is disconnected.",
+      "recovery": "Reconnect the terminal and refresh account state."
+    },
+    "ACCOUNT_UNAUTHORISED": {
+      "retryable": false,
+      "message": "The account could not be authenticated.",
+      "recovery": "Verify the account credentials in the terminal."
+    },
+    "ACCOUNT_MISMATCH": {
+      "retryable": false,
+      "message": "The connected account does not match the selected account.",
+      "recovery": "Disconnect and explicitly select the intended account."
+    },
+    "HISTORY_UNAVAILABLE": {
+      "retryable": true,
+      "message": "Trading history is currently unavailable.",
+      "recovery": "Check terminal connectivity and retry history synchronisation."
+    },
+    "SYMBOL_UNAVAILABLE": {
+      "retryable": false,
+      "message": "The requested broker symbol is unavailable.",
+      "recovery": "Refresh symbol metadata and verify the exact broker symbol."
+    },
+    "MARKET_CLOSED": {
+      "retryable": false,
+      "message": "The market is closed for this operation.",
+      "recovery": "Wait until the broker permits the operation."
+    },
+    "BROKER_CONSTRAINT_VIOLATION": {
+      "retryable": false,
+      "message": "The requested operation violates a broker constraint.",
+      "recovery": "Refresh broker constraints and review the requested parameters."
+    },
+    "UNSUPPORTED_OPERATION": {
+      "retryable": false,
+      "message": "This operation is not supported.",
+      "recovery": "Use a supported operation or account configuration."
+    },
+    "REQUEST_REJECTED": {
+      "retryable": false,
+      "message": "The broker rejected the request.",
+      "recovery": "Review the broker response and current account state."
+    },
+    "REQUEST_TIMEOUT_UNKNOWN": {
+      "retryable": false,
+      "message": "The request timed out and its outcome is unknown.",
+      "recovery": "Reconcile the account state; never submit the same management request blindly."
+    },
+    "PROTOCOL_VERSION_UNSUPPORTED": {
+      "retryable": false,
+      "message": "The desktop and service protocol versions are incompatible.",
+      "recovery": "Install a compatible application version."
+    },
+    "PROTOCOL_INVALID_MESSAGE": {
+      "retryable": false,
+      "message": "The local service sent an invalid message.",
+      "recovery": "Restart the application and inspect redacted diagnostics."
+    },
+    "SERVICE_START_FAILED": {
+      "retryable": true,
+      "message": "The local service could not be started.",
+      "recovery": "Check the installation and local diagnostics."
+    },
+    "SERVICE_CRASHED": {
+      "retryable": true,
+      "message": "The local service stopped unexpectedly.",
+      "recovery": "Wait for supervised restart and account reconciliation."
+    },
+    "DATA_STALE": {
+      "retryable": true,
+      "message": "The displayed data is stale.",
+      "recovery": "Restore connectivity and wait for a successful refresh."
+    },
+    "DATA_INCOMPLETE": {
+      "retryable": true,
+      "message": "The available data is incomplete.",
+      "recovery": "Review coverage details and retry synchronisation."
+    },
+    "RISK_LIMIT_REACHED": {
+      "retryable": false,
+      "message": "The configured risk limit blocks this operation.",
+      "recovery": "Review the risk state; do not bypass the backend safeguard."
+    },
+    "APP_LOCKED": {
+      "retryable": false,
+      "message": "The application is locked.",
+      "recovery": "Unlock the application before continuing."
+    },
+    "EXPORT_FAILED": {
+      "retryable": true,
+      "message": "The report could not be exported.",
+      "recovery": "Verify the selected destination and available disk space."
+    },
+    "OPERATION_RECONCILIATION_REQUIRED": {
+      "retryable": false,
+      "message": "The management operation requires reconciliation.",
+      "recovery": "Refresh broker state before taking further action."
+    }
+  }
+}

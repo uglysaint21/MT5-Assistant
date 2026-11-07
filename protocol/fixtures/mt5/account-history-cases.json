@@ -1,0 +1,190 @@
+{
+  "fixtureVersion": 1,
+  "synthetic": true,
+  "accounts": [
+    {
+      "case": "netting",
+      "login": "SYNTHETIC-NETTING-001",
+      "server": "Fixture-Broker",
+      "mode": "NETTING",
+      "currency": "USD",
+      "balance": "10000.00",
+      "equity": "10125.50",
+      "positions": [
+        {
+          "positionId": "N-POS-1001",
+          "symbol": "EURUSD.a",
+          "side": "BUY",
+          "volume": "0.30",
+          "openPrice": "1.08000",
+          "floatingProfit": "125.50",
+          "commission": "-2.10",
+          "swap": "-0.40"
+        }
+      ]
+    },
+    {
+      "case": "hedging",
+      "login": "SYNTHETIC-HEDGING-001",
+      "server": "Fixture-Broker",
+      "mode": "HEDGING",
+      "currency": "USD",
+      "balance": "5000.00",
+      "equity": "4988.25",
+      "positions": [
+        {
+          "positionId": "H-POS-2001",
+          "symbol": "GBPUSD.pro",
+          "side": "BUY",
+          "volume": "0.10",
+          "openPrice": "1.26000",
+          "floatingProfit": "-6.75",
+          "commission": "-0.80",
+          "swap": "-0.20"
+        },
+        {
+          "positionId": "H-POS-2002",
+          "symbol": "GBPUSD.pro",
+          "side": "SELL",
+          "volume": "0.05",
+          "openPrice": "1.26100",
+          "floatingProfit": "-4.00",
+          "commission": "-0.40",
+          "swap": "-0.10"
+        }
+      ]
+    }
+  ],
+  "deals": [
+    {
+      "case": "partial-close-open",
+      "dealId": "DEAL-3001",
+      "orderId": "ORDER-3001",
+      "positionId": "H-POS-2001",
+      "time": "2026-11-06T10:00:00Z",
+      "entry": "IN",
+      "volume": "0.20",
+      "profit": "0.00",
+      "commission": "-1.60",
+      "swap": "0.00"
+    },
+    {
+      "case": "partial-close",
+      "dealId": "DEAL-3002",
+      "orderId": "ORDER-3002",
+      "positionId": "H-POS-2001",
+      "time": "2026-11-06T12:00:00Z",
+      "entry": "OUT",
+      "volume": "0.10",
+      "profit": "18.50",
+      "commission": "-0.80",
+      "swap": "-0.05"
+    },
+    {
+      "case": "final-close",
+      "dealId": "DEAL-3003",
+      "orderId": "ORDER-3003",
+      "positionId": "H-POS-2001",
+      "time": "2026-11-06T13:00:00Z",
+      "entry": "OUT",
+      "volume": "0.10",
+      "profit": "12.25",
+      "commission": "-0.80",
+      "swap": "-0.05"
+    },
+    {
+      "case": "position-reopened-after-final-close",
+      "dealId": "DEAL-3004",
+      "orderId": "ORDER-3004",
+      "positionId": "H-POS-2001",
+      "time": "2026-11-06T16:00:00Z",
+      "entry": "IN",
+      "volume": "0.10",
+      "profit": "0.00",
+      "commission": "-0.80",
+      "swap": "0.00"
+    },
+    {
+      "case": "cash-flow-deposit",
+      "dealId": "CASH-4001",
+      "time": "2026-11-06T14:00:00Z",
+      "entry": "BALANCE",
+      "volume": "0.00",
+      "profit": "1000.00",
+      "commission": "0.00",
+      "swap": "0.00",
+      "cashMovement": "DEPOSIT"
+    },
+    {
+      "case": "cash-flow-withdrawal",
+      "dealId": "CASH-4002",
+      "time": "2026-11-06T15:00:00Z",
+      "entry": "BALANCE",
+      "volume": "0.00",
+      "profit": "-250.00",
+      "commission": "0.00",
+      "swap": "0.00",
+      "cashMovement": "WITHDRAWAL"
+    }
+  ],
+  "expectedCoverageCases": [
+    "netting",
+    "hedging",
+    "partial-close",
+    "commission",
+    "swap",
+    "deposit",
+    "withdrawal",
+    "broker-symbol-suffix",
+    "separate-position-identifiers"
+  ],
+  "historySyncCases": [
+    {
+      "case": "duplicate-delivery",
+      "records": [
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        },
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        }
+      ],
+      "expectedUniqueDealCount": 1
+    },
+    {
+      "case": "out-of-order-delivery",
+      "records": [
+        {
+          "dealId": "DEAL-3003",
+          "time": "2026-11-06T13:00:00Z"
+        },
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        }
+      ],
+      "expectedOrder": "sort-by-broker-time-and-stable-id"
+    },
+    {
+      "case": "bounded-overlap",
+      "lastSuccessfulCursor": "2026-11-06T12:00:00Z",
+      "overlapStart": "2026-11-06T11:55:00Z",
+      "purpose": "re-fetch bounded history overlap and idempotently upsert by broker deal ID"
+    },
+    {
+      "case": "broker-server-time",
+      "brokerTimezone": "Europe/Helsinki",
+      "winterOffset": "+02:00",
+      "summerOffset": "+03:00",
+      "timestamp": "2026-01-15T12:00:00+02:00"
+    },
+    {
+      "case": "dst-transition",
+      "before": "2026-03-29T02:59:00+02:00",
+      "after": "2026-03-29T04:01:00+03:00",
+      "note": "local wall clock jumps across the DST transition"
+    }
+  ]
+}

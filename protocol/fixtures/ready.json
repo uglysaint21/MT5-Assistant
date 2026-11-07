@@ -1,0 +1,6 @@
+{
+  "kind": "ready",
+  "protocolVersion": 1,
+  "serviceVersion": "0.1.0",
+  "capabilities": ["account.read", "history.sync"]
+}

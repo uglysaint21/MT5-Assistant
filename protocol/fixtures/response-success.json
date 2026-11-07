@@ -1,0 +1,7 @@
+{
+  "kind": "response",
+  "protocolVersion": 1,
+  "requestId": "fixture-response-0001",
+  "ok": true,
+  "result": { "connected": true }
+}

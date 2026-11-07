@@ -1,0 +1,143 @@
+{
+  "protocolVersion": 1,
+  "operations": [
+    {
+      "id": "terminal.discover",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "terminal.validate",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "account.connect",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": false
+    },
+    {
+      "id": "account.disconnect",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "account.getSnapshot",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "monitoring.getLiveSnapshot",
+      "capability": "account.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "history.startInitialSync",
+      "capability": "history.sync",
+      "status": "planned",
+      "idempotent": false
+    },
+    {
+      "id": "history.syncIncremental",
+      "capability": "history.sync",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "history.query",
+      "capability": "history.sync",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "analytics.account.query",
+      "capability": "analytics.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "analytics.instrument.query",
+      "capability": "analytics.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "ea.listInstances",
+      "capability": "ea.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "ea.updateMetadata",
+      "capability": "ea.metadata.write",
+      "status": "planned",
+      "idempotent": false
+    },
+    {
+      "id": "alerts.list",
+      "capability": "alerts.read",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "alerts.acknowledge",
+      "capability": "alerts.manage",
+      "status": "planned",
+      "idempotent": false
+    },
+    {
+      "id": "management.prepare",
+      "capability": "trade.manage",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "management.execute",
+      "capability": "trade.manage",
+      "status": "planned",
+      "idempotent": false,
+      "requiresExplicitConfirmation": true,
+      "unknownOutcomeRequiresReconciliation": true
+    },
+    {
+      "id": "management.reconcile",
+      "capability": "trade.manage",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "reports.create",
+      "capability": "reports.export",
+      "status": "planned",
+      "idempotent": false
+    },
+    {
+      "id": "jobs.getStatus",
+      "capability": "reports.export",
+      "status": "planned",
+      "idempotent": true
+    },
+    {
+      "id": "jobs.cancel",
+      "capability": "reports.export",
+      "status": "planned",
+      "idempotent": false
+    }
+  ],
+  "managementActions": [
+    "MODIFY_POSITION",
+    "PARTIAL_CLOSE_POSITION",
+    "CLOSE_POSITION",
+    "CLOSE_ALL_POSITIONS",
+    "MODIFY_PENDING_ORDER",
+    "CANCEL_PENDING_ORDER"
+  ],
+  "prohibitedOperations": ["trade.openPosition", "trade.openPendingOrder", "trade.placeOrder"],
+  "note": "Every operation is currently planned, not implemented. Runtime dispatch must allow only registered operation IDs, verify the associated capability and enforce backend authorization. Management execution additionally requires explicit confirmation and reconciliation of uncertain outcomes."
+}

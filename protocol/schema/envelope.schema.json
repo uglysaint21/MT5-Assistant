@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mt5-assistant.local/schemas/envelope.schema.json",
+  "title": "MT5 Assistant protocol-v1 envelope",
+  "oneOf": [
+    { "$ref": "request.schema.json" },
+    { "$ref": "ready.schema.json" },
+    { "$ref": "response.schema.json" },
+    { "$ref": "event.schema.json" }
+  ]
+}

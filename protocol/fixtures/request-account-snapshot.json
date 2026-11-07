@@ -1,0 +1,7 @@
+{
+  "kind": "request",
+  "protocolVersion": 1,
+  "requestId": "fixture-request-0001",
+  "operation": "account.getSnapshot",
+  "payload": {}
+}

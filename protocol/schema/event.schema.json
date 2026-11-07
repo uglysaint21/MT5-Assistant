@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mt5-assistant.local/schemas/event.schema.json",
+  "title": "MT5 Assistant unsolicited event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "protocolVersion", "eventId", "event", "occurredAt", "payload"],
+  "properties": {
+    "kind": { "const": "event" },
+    "protocolVersion": { "const": 1 },
+    "eventId": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "event": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "occurredAt": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "payload": { "type": "object" }
+  }
+}

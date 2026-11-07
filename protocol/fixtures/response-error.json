@@ -1,0 +1,12 @@
+{
+  "kind": "response",
+  "protocolVersion": 1,
+  "requestId": "fixture-response-0002",
+  "ok": false,
+  "error": {
+    "code": "TERMINAL_DISCONNECTED",
+    "message": "The MetaTrader 5 terminal is disconnected.",
+    "retryable": true,
+    "details": {}
+  }
+}
