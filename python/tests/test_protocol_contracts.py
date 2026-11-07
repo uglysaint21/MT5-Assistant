@@ -83,7 +83,7 @@ def test_rejects_duplicate_active_request_ids_until_released():
 
     active = ActiveRequestIds()
     active.register("request-1")
-    with pytest.raises(ProtocolError, match="duplicate"):
+    with pytest.raises(ProtocolError, match="Duplicate"):
         active.register("request-1")
     active.release("request-1")
     active.register("request-1")
