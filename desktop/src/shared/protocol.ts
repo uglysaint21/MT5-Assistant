@@ -77,7 +77,7 @@ function isNonEmptyString(value: unknown, maxLength = 256): value is string {
 
 function isUtcTimestamp(value: unknown): value is string {
   if (typeof value !== "string") return false;
-  const match = /^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,6})?Z$/.exec(value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,6})?Z$/.exec(value);
   if (!match) return false;
 
   const year = Number(match[1]);
