@@ -1,6 +1,5 @@
-import Ajv2020 from "ajv/dist/2020.js";
+import { Ajv2020 } from "ajv/dist/2020.js";
 import type { AnySchema } from "ajv";
-import addFormats from "ajv-formats";
 import { describe, expect, it } from "vitest";
 import requestSchema from "../../protocol/schema/request.schema.json" with { type: "json" };
 import readySchema from "../../protocol/schema/ready.schema.json" with { type: "json" };
@@ -13,7 +12,17 @@ import errorFixture from "../../protocol/fixtures/response-error.json" with { ty
 import eventFixture from "../../protocol/fixtures/event-sync-progress.json" with { type: "json" };
 
 const ajv = new Ajv2020({ allErrors: true });
-addFormats(ajv);
+ajv.addFormat("date-time", {
+  type: "string",
+  validate: (value: string) => {
+    if (!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$/.test(value)) {
+      return false;
+    }
+    const parsed = new Date(value);
+    return !Number.isNaN(parsed.getTime()) &&
+      parsed.toISOString().startsWith(value.slice(0, 19));
+  }
+});
 
 describe("shared JSON Schema contracts", () => {
   it("validates the request golden fixture", () => {
