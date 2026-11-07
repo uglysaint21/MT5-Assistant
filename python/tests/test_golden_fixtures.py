@@ -109,3 +109,17 @@ def test_history_sync_fixture_covers_replay_ordering_and_server_dst():
     assert duplicate["records"][0]["dealId"] == duplicate["records"][1]["dealId"]
     out_of_order = next(case for case in dataset["historySyncCases"] if case["case"] == "out-of-order-delivery")
     assert out_of_order["records"][0]["time"] > out_of_order["records"][1]["time"]
+
+
+def test_partial_close_fixture_reconciles_to_current_position_volume():
+    dataset = json.loads(
+        (FIXTURES / "mt5" / "account-history-cases.json").read_text(encoding="utf-8")
+    )
+    position = next(
+        position for account in dataset["accounts"] for position in account["positions"]
+        if position["positionId"] == "H-POS-2001"
+    )
+    related = [deal for deal in dataset["deals"] if deal.get("positionId") == "H-POS-2001"]
+    opened = sum(float(deal["volume"]) for deal in related if deal["entry"] == "IN")
+    closed = sum(float(deal["volume"]) for deal in related if deal["entry"] == "OUT")
+    assert round(opened - closed, 8) == round(float(position["volume"]), 8)
