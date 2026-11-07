@@ -125,5 +125,54 @@
     "withdrawal",
     "broker-symbol-suffix",
     "separate-position-identifiers"
+  ],
+  "historySyncCases": [
+    {
+      "case": "duplicate-delivery",
+      "records": [
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        },
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        }
+      ],
+      "expectedUniqueDealCount": 1
+    },
+    {
+      "case": "out-of-order-delivery",
+      "records": [
+        {
+          "dealId": "DEAL-3003",
+          "time": "2026-11-06T13:00:00Z"
+        },
+        {
+          "dealId": "DEAL-3002",
+          "time": "2026-11-06T12:00:00Z"
+        }
+      ],
+      "expectedOrder": "sort-by-broker-time-and-stable-id"
+    },
+    {
+      "case": "bounded-overlap",
+      "lastSuccessfulCursor": "2026-11-06T12:00:00Z",
+      "overlapStart": "2026-11-06T11:55:00Z",
+      "purpose": "re-fetch bounded history overlap and idempotently upsert by broker deal ID"
+    },
+    {
+      "case": "broker-server-time",
+      "brokerTimezone": "Europe/Helsinki",
+      "winterOffset": "+02:00",
+      "summerOffset": "+03:00",
+      "timestamp": "2026-01-15T12:00:00+02:00"
+    },
+    {
+      "case": "dst-transition",
+      "before": "2026-03-29T02:59:00+02:00",
+      "after": "2026-03-29T04:01:00+03:00",
+      "note": "local wall clock jumps across the DST transition"
+    }
   ]
 }
