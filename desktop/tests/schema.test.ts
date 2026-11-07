@@ -1,4 +1,4 @@
-import Ajv from "ajv";
+import Ajv, { type AnySchema } from "ajv";
 import addFormats from "ajv-formats";
 import { describe, expect, it } from "vitest";
 import requestSchema from "../../protocol/schema/request.schema.json" with { type: "json" };
@@ -16,21 +16,21 @@ addFormats(ajv);
 
 describe("shared JSON Schema contracts", () => {
   it("validates the request golden fixture", () => {
-    expect(ajv.compile(requestSchema)(requestFixture)).toBe(true);
+    expect(ajv.compile(requestSchema as AnySchema)(requestFixture)).toBe(true);
   });
 
   it("validates the ready handshake golden fixture", () => {
-    expect(ajv.compile(readySchema)(readyFixture)).toBe(true);
+    expect(ajv.compile(readySchema as AnySchema)(readyFixture)).toBe(true);
   });
 
   it("validates success and error response golden fixtures", () => {
-    const validate = ajv.compile(responseSchema);
+    const validate = ajv.compile(responseSchema as AnySchema);
     expect(validate(successFixture)).toBe(true);
     expect(validate(errorFixture)).toBe(true);
   });
 
   it("validates the UTC event golden fixture", () => {
-    expect(ajv.compile(eventSchema)(eventFixture)).toBe(true);
+    expect(ajv.compile(eventSchema as AnySchema)(eventFixture)).toBe(true);
   });
 
   it("rejects unexpected request fields", () => {
