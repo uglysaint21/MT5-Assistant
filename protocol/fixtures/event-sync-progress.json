@@ -1,0 +1,8 @@
+{
+  "kind": "event",
+  "protocolVersion": 1,
+  "eventId": "fixture-event-0001",
+  "event": "sync.progress",
+  "occurredAt": "2026-11-07T18:00:00Z",
+  "payload": { "completed": 25, "total": 100 }
+}
