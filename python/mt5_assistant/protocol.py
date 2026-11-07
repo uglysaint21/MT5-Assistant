@@ -10,6 +10,9 @@ MAX_FRAME_BYTES = 1_048_576
 MAX_ACTIVE_REQUESTS = 1_024
 
 
+class ProtocolError(ValueError):
+    """Raised when a process-protocol frame is invalid."""
+
 class ActiveRequestIds:
     """Bounded registry that rejects duplicate IDs while requests are in flight."""
 
@@ -30,11 +33,6 @@ class ActiveRequestIds:
 
     def release(self, request_id: str) -> None:
         self._active.discard(request_id)
-
-
-class ProtocolError(ValueError):
-    """Raised when a process-protocol frame is invalid."""
-
 
 def _reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
