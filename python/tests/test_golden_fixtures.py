@@ -94,3 +94,18 @@ def test_error_catalogue_has_stable_codes_and_safe_recovery_metadata():
         assert isinstance(definition["retryable"], bool)
         assert definition["message"].strip()
         assert definition["recovery"].strip()
+
+
+def test_history_sync_fixture_covers_replay_ordering_and_server_dst():
+    dataset = json.loads(
+        (FIXTURES / "mt5" / "account-history-cases.json").read_text(encoding="utf-8")
+    )
+    cases = {case["case"] for case in dataset["historySyncCases"]}
+    assert cases >= {
+        "duplicate-delivery", "out-of-order-delivery", "bounded-overlap",
+        "broker-server-time", "dst-transition"
+    }
+    duplicate = next(case for case in dataset["historySyncCases"] if case["case"] == "duplicate-delivery")
+    assert duplicate["records"][0]["dealId"] == duplicate["records"][1]["dealId"]
+    out_of_order = next(case for case in dataset["historySyncCases"] if case["case"] == "out-of-order-delivery")
+    assert out_of_order["records"][0]["time"] > out_of_order["records"][1]["time"]
