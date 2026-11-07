@@ -28,7 +28,12 @@ Python owns MT5 communication, data synchronisation, financial calculations, EA 
 ## Documentation
 
 1. [Product requirements](docs/01-product-requirements.md)
-2. [System architecture](docs/02-system-architecture.md)
+2. [System architecture (original summary)](docs/02-system-architecture.md)
+17. [Full architecture overview](docs/17-architecture-overview.md)
+18. [Component boundaries and responsibilities](docs/18-component-design.md)
+19. [Process protocol and data contracts](docs/19-protocol-and-data-contracts.md)
+20. [Security, data lifecycle and operations](docs/20-security-data-operations.md)
+21. [Architecture decisions and validation register](docs/21-architecture-decisions.md)
 3. [MT5 integration](docs/03-mt5-integration.md)
 4. [Data model and synchronisation](docs/04-data-model-and-synchronisation.md)
 5. [Financial analytics](docs/05-financial-analytics.md)
