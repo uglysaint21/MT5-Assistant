@@ -22,7 +22,7 @@ def test_rejects_unsupported_protocol_version():
 
 
 def test_encodes_one_json_line():
-    assert encode_frame({"protocolVersion": 1, "kind": "ready"}).endswith("\n")
+    assert encode_frame({"protocolVersion": 1, "kind": "ready", "serviceVersion": "0.1.0", "capabilities": []}).endswith("\n")
 
 
 def test_rejects_duplicate_json_object_keys():
