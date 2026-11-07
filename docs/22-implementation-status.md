@@ -35,7 +35,7 @@ A checked item means code or automation exists in the repository; it does not im
 
 ## Validation evidence
 
-- Python protocol, schema, fixture, operation-registry and error-catalogue tests: **27 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
+- Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **32 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
 - TypeScript protocol source: strict tsc --noEmit check passed using the globally available TypeScript compiler. The complete Vitest/Ajv suite has not yet been run because package installation was unavailable in the isolated environment.
 - GitHub Actions: no workflow run was returned for the current PR head at the last check; do not treat the workflow definition as a passing CI result.
 - Windows/MT5 compatibility: not yet tested.
