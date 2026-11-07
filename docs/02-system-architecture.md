@@ -1,66 +1,27 @@
-# 02 — System architecture
+# 02 — System architecture (summary)
 
-## Recommended architecture
+The detailed target architecture has been expanded into a coordinated set of architecture documents:
 
-Use an Electron + React + TypeScript desktop shell with a bundled Python service. Python is authoritative for MT5 access, data normalisation, synchronisation, financial calculations, EA attribution, risk evaluation and report generation.
+- [17 — Architecture overview](17-architecture-overview.md): architecture style, deployment topology, module boundaries, domain model, workflows, resilience, quality attributes and implementation sequence.
+- [18 — Component design](18-component-design.md): component responsibilities, application use cases, dependency rules and test seams.
+- [19 — Protocol and data contracts](19-protocol-and-data-contracts.md): JSON Lines envelopes, handshake, request lifecycle, DTOs, management-operation state machine and error taxonomy.
+- [20 — Security, data lifecycle and operations](20-security-data-operations.md): threat model, Electron/process hardening, credential protection, retention, diagnostics, trade recovery and release security.
+- [21 — Architecture decisions and validation register](21-architecture-decisions.md): confirmed constraints, recommendations and unresolved implementation decisions.
 
-~~~mermaid
-flowchart TB
-  UI[React + TypeScript renderer]
-  PRELOAD[Minimal typed preload API]
-  MAIN[Electron main process]
-  PY[Bundled Python service]
-  MT5[Installed MT5 terminal]
-  CACHE[Temporary trading-data cache]
-  STORE[Persistent app settings and EA metadata]
-  REPORTS[User-exported reports]
-  UI --> PRELOAD --> MAIN
-  MAIN <-->|Versioned JSON lines| PY
-  PY <-->|MetaTrader5 Python package| MT5
-  PY --> CACHE
-  MAIN --> STORE
-  PY --> REPORTS
-~~~
+## Architecture at a glance
 
-## Module boundaries
+Electron main owns desktop lifecycle, secure IPC, the bundled Python child process, local settings, tray, notifications and update orchestration. The React/TypeScript renderer is presentation-only and communicates through a minimal typed preload API. Python owns MT5 integration, domain workflows, history synchronisation, the shared analytics engine, EA attribution, risk evaluation, alerts and report generation.
 
-### Electron main
-Owns lifecycle, single-instance policy, window/tray, installer/update orchestration and Python child process. It is the only renderer-facing IPC boundary. It does not calculate financial metrics or call MT5 directly.
+The two processes communicate through versioned JSON Lines over stdin/stdout. The installed MT5 terminal is accessed through the official MetaTrader5 Python package. Trading data remains in temporary account-scoped cache; durable application data is limited to settings, layouts, custom EA metadata, diagnostics, exports and user-created backups.
 
-### React renderer
-Owns pages, widgets, tables, charts, forms and accessible interactions. It holds presentation state only; no unrestricted Node or filesystem access. It calls a narrow typed preload API.
+## Non-negotiable boundaries
 
-### Python service
-Recommended modules:
-- mt5: terminal discovery, connection, account, positions, orders, history, symbols and trade operations.
-- sync: initial history sync, incremental sync, deduplication and reconciliation.
-- domain: normalised entities and enums.
-- analytics: PnL, returns, drawdown, portfolio, instrument and EA calculations.
-- ea: attribution, instance registry, status and optional heartbeat ingestion.
-- risk: limits, evaluations and action gating.
-- alerts: state transitions, cooldowns and notification events.
-- reports: report models and PDF/XLSX/CSV exporters.
-- cache: temporary trading-data cache and retention.
-- protocol: JSON message schemas, validation and version negotiation.
+- No new trade entry; only the documented position and pending-order management operations are permitted.
+- Backend revalidates broker constraints and risk policy immediately before every management request.
+- A timeout or process failure after submission is an unknown outcome; reconcile actual MT5 state before any further action.
+- The renderer cannot access Node.js, filesystem APIs, MT5 or generic IPC.
+- The Python service has no unauthenticated network listener; stdout is protocol-only.
+- No permanent trading-history database, no automatic telemetry and no persisted MT5 trading password.
+- Monitoring continues in the system tray; explicit exit stops it.
 
-## Process communication contract
-Use newline-delimited JSON over Python stdin/stdout. Stdout is reserved exclusively for protocol messages; diagnostics go to stderr or rotating local logs.
-
-Every request contains protocol version, unique request ID, operation name and validated payload. Every response contains the matching request ID and either a typed result or structured error (code, safe message, optional details). Unsolicited events use a separate event envelope. Define timeouts, cancellation, maximum message size, schema validation, startup handshake and protocol-version mismatch behaviour.
-
-Do not send arbitrary Python commands or filesystem paths from the renderer. Main validates renderer requests; Python validates its own boundary.
-
-## Lifecycle and recovery
-1. Electron starts, verifies app-password gate and loads settings.
-2. Main starts bundled Python and waits for version/capability handshake.
-3. Python discovers/attaches to selected terminal and validates account data.
-4. Dashboard renders available current data; history sync runs in background.
-5. Every five seconds, refresh live account/position/order state; history uses incremental sync.
-6. On terminal disconnect, mark data stale immediately and reconnect with progressive backoff and a cap.
-7. On Python crash, restart under a bounded restart policy, reconnect and reconcile state.
-8. On explicit exit, stop polling, stop child process gracefully and close. Minimise-to-tray is not exit.
-
-A restarted backend must not repeat a trade operation whose result is unknown. Reconcile positions/orders/history before re-enabling management.
-
-## Performance and architecture decisions
-Use asynchronous IPC and background work. Long analytics/report jobs must not block UI or Electron main event loop. Provide progress and cancellation. No separate server/cloud service is required. MQL5 is optional and only for terminal-side EA heartbeat/status evidence.
+See document 17 as the canonical architecture description. This summary is retained for compatibility with the original documentation index.
