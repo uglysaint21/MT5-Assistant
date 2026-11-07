@@ -1,4 +1,5 @@
 """Strict transport primitives for the versioned stdin/stdout JSON Lines protocol."""
+
 from __future__ import annotations
 
 import json
