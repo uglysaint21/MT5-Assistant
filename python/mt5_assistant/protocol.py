@@ -31,6 +31,6 @@ def encode_frame(message: dict[str, Any]) -> str:
     if message.get("protocolVersion") != PROTOCOL_VERSION:
         raise ProtocolError("Unsupported protocol version.")
     try:
-        return json.dumps(message, separators=(",", ":"), ensure_ascii=False) + "\\n"
+        return json.dumps(message, separators=(",", ":"), ensure_ascii=False) + "\n"
     except (TypeError, ValueError) as exc:
         raise ProtocolError("Protocol message is not JSON serializable.") from exc
