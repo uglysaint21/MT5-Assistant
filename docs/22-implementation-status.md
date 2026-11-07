@@ -28,7 +28,7 @@ A checked item means code or automation exists in the repository; it does not im
 ### Remaining Phase 0 work
 - [ ] Validate the supported Windows 10/11, Python, MetaTrader5 package and terminal build compatibility matrix on clean target systems.
 - [ ] Generate and commit reproducible npm and Python dependency lockfiles. Direct desktop development dependencies are pinned, but transitive dependency resolution is not yet locked.
-- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. PR run #108 failed on TypeScript default-import interoperability and a case-sensitive Python test assertion; both are fixed. Run 42418199020 passed npm high-severity audit, TypeScript typecheck, all 13 TypeScript tests and all 29 Python tests. After adding formatter/linter gates, run 42418537803 passed Python Ruff lint/format and 29 tests; its TypeScript job passed dependency audit but flagged one Prettier formatting difference in ready.schema.json. That schema has been corrected; a final rerun on the latest head remains pending. The earlier install reported two critical and two moderate advisories; after upgrading Vitest and Ajv, the high-severity audit gate passed.
+- [x] Verify the GitHub Actions workflow on the latest PR head and resolve failures. Earlier runs exposed TypeScript import interoperability, a case-sensitive Python assertion and one formatting issue; all were fixed. Latest run 42418697169 (run #195) passed both jobs, including Prettier, TypeScript typecheck, 13 TypeScript tests, npm high-severity audit, Ruff lint/format and 29 Python tests. The initial npm install reported two critical and two moderate advisories; after upgrading Vitest and Ajv, the high-severity audit gate passes.
 - [ ] Add stronger property/fuzz tests for protocol parsing and request lifecycle under concurrency.
 - [x] Extend synthetic MT5 fixtures for duplicate/out-of-order history delivery, bounded overlap synchronisation, broker/server time and DST edge cases.
 - [ ] Close or explicitly record the remaining compatibility/toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md).
@@ -36,8 +36,8 @@ A checked item means code or automation exists in the repository; it does not im
 ## Validation evidence
 
 - Python protocol, schema, fixture, history-sync, operation-registry and error-catalogue tests: **29 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
-- TypeScript protocol source: strict tsc --noEmit check passed using global TypeScript 5.8.3. The full desktop typecheck failed in PR run #108 due to default-import interop settings; esModuleInterop and synthetic default imports have since been enabled. The complete Vitest/Ajv test suite has not yet completed successfully.
-- GitHub Actions: run 42418199020 passed the complete pre-lint-gate CI. Run 42418537803 passed the Python lint, formatting and test jobs; TypeScript dependency audit passed but formatting failed on one schema subsequently corrected. A completed all-green run for the latest head is still required.
+- TypeScript CI: Prettier check, full tsc --noEmit and all 13 Vitest/Ajv tests passed in run #195.
+- GitHub Actions: latest run #195 (42418697169) passed both TypeScript and Python jobs on the current PR head.
 - Windows/MT5 compatibility: not yet tested.
 
 ## Delivery discipline
