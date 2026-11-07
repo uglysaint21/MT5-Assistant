@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 22.x and npm 10 or newer.
+- Node.js 22.12 or newer within the 22.x line (CI pins 22.23.4) and npm 10 or newer.
 - Python 3.11 or newer (CI currently exercises Python 3.12).
 - Git.
 - Windows 10/11 x64 and an installed MetaTrader 5 terminal are required for later real-terminal integration work. The current protocol foundation tests do not require MT5.
@@ -17,7 +17,7 @@ npm run typecheck
 npm test
 ```
 
-The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 3.2.4, Ajv 8.17.1, ajv-formats 3.0.1 and @types/node 22.19.0. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
+The direct desktop development dependencies are pinned in desktop/package.json: TypeScript 5.9.3, Vitest 5.1.0, Ajv 8.17.1, ajv-formats 3.0.1 and @types/node 22.19.0. A committed npm lockfile is still pending; until it is added, transitive dependency resolution is not fully reproducible.
 
 ## Python service
 
