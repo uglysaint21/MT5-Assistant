@@ -6,27 +6,39 @@ A checked item means code or automation exists in the repository; it does not im
 
 ## Phase 0 — Specification and engineering foundation
 
-### Started in this increment
+### Implemented in this increment
 - [x] Establish a monorepo layout for the desktop TypeScript package and Python service.
-- [x] Add strict TypeScript compiler configuration.
+- [x] Add strict TypeScript compiler configuration and pin direct desktop development dependencies.
 - [x] Add Python package metadata and pytest configuration.
-- [x] Define the initial protocol-v1 request schema and canonical request fixture.
-- [x] Add TypeScript process-response contracts and basic validation.
-- [x] Add Python JSON Lines framing primitives with a 1 MiB frame limit and protocol-version check.
-- [x] Add focused TypeScript and Python protocol tests.
+- [x] Define protocol-v1 request, ready, success/error response and event JSON Schemas.
+- [x] Define TypeScript protocol envelope types and strict runtime guards.
+- [x] Add Python JSON Lines framing with a 1 MiB frame bound, protocol-version validation and duplicate JSON-key rejection.
+- [x] Add strict Python envelope validation, including exact-field checks and UTC event timestamps.
+- [x] Add a bounded active request-ID registry that rejects duplicate in-flight IDs.
+- [x] Define a stable protocol error-code catalogue with safe messages, retryability and recovery guidance.
+- [x] Define a capability registry, explicitly marking all runtime capabilities as planned and listing prohibited trade-entry capabilities.
+- [x] Add shared protocol golden fixtures and validate them in Python and TypeScript test suites.
+- [x] Add Ajv and Python jsonschema-based schema validation tests.
+- [x] Add malformed JSON, oversized frame, duplicate-key, duplicate-active-ID, unknown-field, invalid timestamp, malformed envelope and unsupported-version tests.
+- [x] Add synthetic MT5 netting/hedging account and history fixtures covering partial closes, commissions, swaps, deposits, withdrawals, broker symbol suffixes and distinct position IDs.
 - [x] Add GitHub Actions jobs for TypeScript and Python verification.
 - [x] Add baseline generated-artifact, environment and secret exclusions.
+- [x] Document developer setup and the Phase 0 security threat model/test mapping.
 
 ### Remaining Phase 0 work
-- [ ] Complete the protocol schemas for ready, success/error response and event envelopes.
-- [ ] Define the complete stable error-code catalogue and operation/capability registry.
-- [ ] Add cross-language golden fixtures and schema validation on both sides.
-- [ ] Add malformed, oversized, duplicate-ID, unknown-field and unsupported-version contract tests.
-- [ ] Create representative MT5 account/history fixtures for netting, hedging, partial closes, cash flows, commissions and swaps.
-- [ ] Validate the supported Windows, Python, MetaTrader5 package and terminal compatibility matrix.
-- [ ] Select and pin the supported toolchain versions; commit reproducible lockfiles.
-- [ ] Complete the threat model and map security acceptance tests.
-- [ ] Verify the CI workflow on GitHub and resolve all failures.
+- [ ] Validate the supported Windows 10/11, Python, MetaTrader5 package and terminal build compatibility matrix on clean target systems.
+- [ ] Generate and commit reproducible npm and Python dependency lockfiles. Direct desktop development dependencies are pinned, but transitive dependency resolution is not yet locked.
+- [ ] Verify the GitHub Actions workflow on the current PR and resolve any failures. Python unit/schema tests and the TypeScript protocol source typecheck have been run in an isolated local verification workspace; the complete repository CI has not yet been observed passing.
+- [ ] Add stronger property/fuzz tests for protocol parsing and request lifecycle under concurrency.
+- [ ] Add a broader synthetic MT5 dataset for duplicate/out-of-order history, broker/server time and DST edge cases.
+- [ ] Close or explicitly record the remaining compatibility/toolchain and protocol-schema decisions in [21 — Architecture decisions](21-architecture-decisions.md).
+
+## Validation evidence
+
+- Python protocol, schema and fixture tests: **21 passed** in an isolated verification workspace using Python 3.13.5 and pytest 9.0.2. The CI target remains Python 3.12 and the project constraint is Python 3.11+.
+- TypeScript protocol source: strict tsc --noEmit check passed using the globally available TypeScript compiler. The complete Vitest/Ajv suite has not yet been run because package installation was unavailable in the isolated environment.
+- GitHub Actions: no workflow run was returned for the current PR head at the last check; do not treat the workflow definition as a passing CI result.
+- Windows/MT5 compatibility: not yet tested.
 
 ## Delivery discipline
 
@@ -38,4 +50,4 @@ A checked item means code or automation exists in the repository; it does not im
 
 ## Current implementation boundary
 
-The current code is a foundation slice only. It does not yet launch Electron, render a UI, start a Python child process, connect to MetaTrader 5, persist settings, or implement any trading operation. No trading capability is currently implemented.
+The current code is a protocol/tooling foundation only. It does not yet launch Electron, render a UI, start a Python child process, connect to MetaTrader 5, persist settings, or implement any trading operation. No trading capability is currently implemented.
