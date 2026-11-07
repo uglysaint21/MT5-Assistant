@@ -7,6 +7,29 @@ from typing import Any
 
 PROTOCOL_VERSION = 1
 MAX_FRAME_BYTES = 1_048_576
+MAX_ACTIVE_REQUESTS = 1_024
+
+
+class ActiveRequestIds:
+    """Bounded registry that rejects duplicate IDs while requests are in flight."""
+
+    def __init__(self, max_active: int = MAX_ACTIVE_REQUESTS) -> None:
+        if max_active < 1:
+            raise ValueError("max_active must be positive.")
+        self._active: set[str] = set()
+        self._max_active = max_active
+
+    def register(self, request_id: str) -> None:
+        if not isinstance(request_id, str) or not request_id.strip():
+            raise ProtocolError("Request ID must be a non-empty string.")
+        if request_id in self._active:
+            raise ProtocolError("Duplicate active request ID.")
+        if len(self._active) >= self._max_active:
+            raise ProtocolError("Maximum number of active requests reached.")
+        self._active.add(request_id)
+
+    def release(self, request_id: str) -> None:
+        self._active.discard(request_id)
 
 
 class ProtocolError(ValueError):
@@ -33,7 +56,7 @@ def decode_frame(line: str) -> dict[str, Any]:
         raise ProtocolError("Protocol frame is not valid UTF-8 JSON.") from exc
     if not isinstance(value, dict):
         raise ProtocolError("Protocol frame must be a JSON object.")
-    if value.get("protocolVersion") != PROTOCOL_VERSION:
+    if type(value.get("protocolVersion")) is not int or value.get("protocolVersion") != PROTOCOL_VERSION:
         raise ProtocolError("Unsupported protocol version.")
     return value
 
@@ -59,7 +82,7 @@ def validate_envelope(message: dict[str, Any]) -> dict[str, Any]:
     """Validate one complete protocol-v1 envelope and return it unchanged."""
     if not isinstance(message, dict):
         raise ProtocolError("Protocol envelope must be an object.")
-    if message.get("protocolVersion") != PROTOCOL_VERSION:
+    if type(message.get("protocolVersion")) is not int or message.get("protocolVersion") != PROTOCOL_VERSION:
         raise ProtocolError("Unsupported protocol version.")
 
     kind = message.get("kind")
